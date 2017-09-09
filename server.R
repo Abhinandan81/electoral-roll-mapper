@@ -1,9 +1,10 @@
 library(shiny)
 library(readxl)
+library(dplyr)
 library(DBI)
 library(pool)
 library(RMySQL)
-library(dplyr)
+
 
 #************************ START: DATABASE CONFIGURATION **********************#
 
@@ -22,9 +23,9 @@ table_area_details <- "area_details"
 
 #****************** START: PERSISTING AREA DETAILS TO DATABASE ***************#
 
-persistAreaDatails <- function(connection, data, table_name) {
+persistAreaDatails <- function(data, table_name) {
   dbWriteTable(
-    connection,
+    pool,
     value = data,
     name = table_name,
     row.names = FALSE,
@@ -58,7 +59,7 @@ bootstrapDatabaseWithUnmappedAreaDetails <- function(){
   #------------------ END: VALIDATING AND FILTERING INPUT DATA   ------------------#
   
   # Persisting the area and it's associated details
-  persistAreaDatails(pool, area_details, table_area_details)
+  persistAreaDatails(area_details, table_area_details)
   
 }
 
@@ -68,27 +69,63 @@ bootstrapDatabaseWithUnmappedAreaDetails <- function(){
 # loading unmapped area details
 unmapped_area_details <- bootstrapDatabaseWithUnmappedAreaDetails()
 
+
 shinyServer(function(input, output){
   
+  #********* START: FETCHING ALL AREAS TO BE MAPPED FROM DATABASE ************#
+  fetchAreasToBeMapped <- function(table_name){
+    #query to fetch area_name from table
+    query <- paste("SELECT area_name FROM ", table_name, ";", sep = " ")
+    
+    area_details <-
+      dbGetQuery(pool, query)
+  
+    if(is.null(area_details))
+      return(NULL)
+    
+    return(area_details$area_name)
+  }
+  #********* END: FETCHING ALL AREAS TO BE MAPPED FROM DATABASE ************#
   
   
-  # output$rough_image <- renderText({
-  #   print("-------- unmapped_area_details ----------")
-  #   print(unmapped_area_details)
-  #   
-  #   source_image <- "https://drive.google.com/file/d/0B8V6CQ17I6WrX1pHZVhVRzlweU0/view?usp=sharing"
-  #   
-  #   print("source_image")
-  #   print(source_image)
-  #   
-  #  image_vector <- c(
-  #    
-  #     '<img src="', source_image, '">'
-  #   )
-  #  
-  #  print("======= image_vector ====")
-  #  print(image_vector)
-  #  
-  #  return(image_vector)
-  # })
+  #******* START: FETCHING IMAGE PATH FOR GIVEN AREA FROM DATABASE *********#
+  fetchImagePathForGivenArea <- function(area_name, table_name){
+    #query to fetch image_path from table
+    query <- paste("SELECT image_path FROM ", table_name, " where area_name = '", area_name, "';", sep = "")
+    
+    image_details <-
+      dbGetQuery(pool, query)
+    
+    if(is.null(image_details))
+      return(NULL)
+    
+    return(image_details$image_path)
+  }
+  #******** END: FETCHING IMAGE PATH FOR GIVEN AREA FROM DATABASE *********#
+  
+  
+    
+  # RENDERING LIST OF AREAS: fetching list of areas to map - populating and rendering selctinput with area names
+  output$areas <-  renderUI({
+    
+    area_names <- fetchAreasToBeMapped(table_area_details)
+    
+    selectInput(inputId = "area_names", label = "Select Area", choices = c("", area_names), selected = NULL, 
+                multiple = FALSE, selectize = TRUE, width = NULL, size = NULL)
+  })
+  
+  # RENDERING IMAGE: rendering image for selcted area
+  output$rough_area_image <- renderImage({
+    req(input$area_names)
+
+    image_path <- fetchImagePathForGivenArea(input$area_names, table_area_details)
+
+    # If no image found for slected area, show default image
+    if(is.null(image_path))
+      image_path <- "reference/default_image.png"
+
+    return(list(src = image_path,
+                alt = "ALT"))
+  }, deleteFile = FALSE)
+  
 })
