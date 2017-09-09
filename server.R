@@ -125,7 +125,7 @@ shinyServer(function(input, output){
       image_path <- "reference/default_image.png"
 
     return(list(src = image_path,
-                alt = "ALT"))
+                alt = toupper(input$area_names)))
   }, deleteFile = FALSE)
   
 })
