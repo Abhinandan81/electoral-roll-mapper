@@ -43,7 +43,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                            fluidRow(
                              column(12,
                                     div( id = "save_button_div",
-                                         actionButton(inputId = "save_cordinates", label = "Save Coordinates", class = "btn-success")
+                                         actionButton(inputId = "save_cordinates", label = "Save Coordinates", class = "btn-primary")
                                     )
                              )
                            )

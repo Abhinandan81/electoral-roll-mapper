@@ -76,7 +76,7 @@ bootstrapDatabaseWithUnmappedAreaDetails <- function(){
 unmapped_area_details <- bootstrapDatabaseWithUnmappedAreaDetails()
 
 
-shinyServer(function(input, output){
+shinyServer(function(input, output, session){
   
   #********* START: FETCHING ALL AREAS TO BE MAPPED FROM DATABASE ************#
   fetchAreasToBeMapped <- function(table_name){
@@ -126,17 +126,12 @@ shinyServer(function(input, output){
     query <- paste("UPDATE ", table_name, " SET latitude = '", coordinates$latitude,"', ", 
                     "longitude = '", coordinates$longitude,"'", " WHERE area_name = '", area_name, "';", sep = "")
     
-    print("query=============")
-    print(query)
     conn <- poolCheckout(pool)
     
     coordinate_update_status <-
       dbSendQuery(conn, query)
     
     poolReturn(conn)
-    
-    print("===== coordinate_update_status ===")
-    print(coordinate_update_status)
   }
   
   
@@ -165,11 +160,13 @@ shinyServer(function(input, output){
   
   # observing the state of area_coordinates and accordingly enabling / disabling the save button
   observe({
-    
-    if(is.null(input$area_coordinates)){
+  
+    if(is.null(input$area_coordinates) | is.null(input$area_names)){
       shinyjs::disable(id = "save_cordinates")
-    } else{
-        shinyjs::enable(id = "save_cordinates")
+    } else {
+       if(input$area_names != ""){
+         shinyjs::enable(id = "save_cordinates") 
+       }
       }
   })
   
@@ -186,11 +183,33 @@ shinyServer(function(input, output){
     
     req(input$area_names, input$area_coordinates, input$save_cordinates)
     
+    showModal(modalDialog(
+      title = "Area and Coordinate mapping confirmation",
+      "Are you sure about updating the Area and Coordinates Mapping?",
+      easyClose = FALSE,
+      footer =  tagList(
+        actionButton("persist_cordinates", "Yes", class = "btn-success"),
+        modalButton("Cancel")
+      ),
+      fade = TRUE
+    ))
+  })
+  
+  # START: PERSISTING CO-ORDINATES
+  observeEvent(input$persist_cordinates, {
+
+    req(input$area_names, input$area_coordinates, input$persist_cordinates)
+
     # call to update-coordinate of the selected area
     updateAreaCoordinates(input$area_names, input$area_coordinates, table_area_details)
-    
-    showNotification(paste ("Co-ordinates for", input$area_names, "area has been stored / updated successfully", sep = " "),
+
+    # removing the mapping modal
+    removeModal()
+
+    showNotification(paste ("Co-ordinates for", input$area_names, "has been stored / updated successfully", sep = " "),
                      duration = 20, closeButton = TRUE, type = "message")
     })
+  
+
   
 })
