@@ -1,6 +1,13 @@
+/* IMAGE STYLING*/
 img {
   height: 100%;
   width: 100%;
   border: 3px solid #999999;
   border-radius: 5px;
 }
+
+/* MAP VIEW*/
+ #map {
+        height: 500px;
+        width: 500px;
+      }
