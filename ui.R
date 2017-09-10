@@ -36,7 +36,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                            ),
                            fluidRow(
                              column(12,
-                                    div( id = "map"
+                                      div( id = "map"
                                     )
                              )
                            ),
