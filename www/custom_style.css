@@ -5,11 +5,12 @@ img {
   border: 3px solid #999999;
   border-radius: 5px;
 }
-
-/* MAP VIEW*/
+      
  #map {
         height: 400px;
-        width: 500px;
+        width: 600px;
+        border: 3px solid #999999;
+        border-radius: 5px;
       }
       
       #description {
@@ -81,4 +82,8 @@ img {
       }
       #target {
         width: 345px;
+      }
+      
+      #save_button_div{
+        margin-top: 10px;
       }
