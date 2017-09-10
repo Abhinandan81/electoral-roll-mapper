@@ -128,4 +128,11 @@ shinyServer(function(input, output){
                 alt = toupper(input$area_names)))
   }, deleteFile = FALSE)
   
+  observe({
+    input$area_coordinates
+    print("Marker location changed")
+    print(input$area_coordinates)
+    
+  })
+  
 })

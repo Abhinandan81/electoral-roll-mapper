@@ -58,9 +58,9 @@
               anchor: new google.maps.Point(17, 34),
               scaledSize: new google.maps.Size(25, 25)
             };
-            
-            console.log("place.geometry.location", place.geometry.location);
-
+          
+            var marker_coordinates = [];
+           
             // Create a marker for each place.
             var marker = new google.maps.Marker({
               map: map,
@@ -77,16 +77,23 @@
               bounds.extend(place.geometry.location);
             }
             
-            console.log("initial marker lat:", marker.getPosition().lat());
-            
-            google.maps.event.addListener(marker, 'dragend', function(a) {
-            console.log("lattt:", this.getPosition().lat());
+            // INITIAL COORDINATES: getting the cordinates on selecteing the place from search bar
+            marker_coordinates = {latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng()};
+                
+            // Capturing the change in marker position : It acts as a reactive input value  
+            Shiny.onInputChange("area_coordinates", marker_coordinates);
 
+            // Listening to the change in marker position
+            google.maps.event.addListener(marker, 'dragend', function(a) {
+              // GETTING CHANGED COORDINATES: getting the cordinates on selecteing the place from search bar
+              marker_coordinates = {latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng()};
+              
+              // Capturing the change in marker position : It acts as a reactive input value
+              Shiny.onInputChange("area_coordinates", marker_coordinates);
             });
 
           });
           map.fitBounds(bounds);
-          
         });
         
         
