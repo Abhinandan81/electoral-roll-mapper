@@ -8,7 +8,7 @@ img {
 
 /* MAP VIEW*/
  #map {
-        height: 500px;
+        height: 400px;
         width: 500px;
       }
       
@@ -57,7 +57,7 @@ img {
         font-weight: 300;
       }
 
-     #area-input {
+     #area_input {
         background-color: #fff;
         font-family: Roboto;
         font-size: 15px;
@@ -68,7 +68,7 @@ img {
         width: 400px;
       }
 
-      #area-input:focus {
+      #area_input:focus {
         border-color: #4d90fe;
       }
 
