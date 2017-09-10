@@ -77,6 +77,13 @@
             // INITIAL COORDINATES: getting the cordinates on selecteing the place from search bar
             marker_coordinates = {latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng()};
                 
+            $.ajax({
+            url: "http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true/false",
+            type: 'GET',
+            success: function(res) {
+                console.log("geocoding res", res.results[0].formatted_address);
+            }
+        });    
             // Capturing the change in marker position : It acts as a reactive input value  
             Shiny.onInputChange("area_coordinates", marker_coordinates);
 
