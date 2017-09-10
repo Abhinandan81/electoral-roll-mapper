@@ -2,14 +2,37 @@
 img {
   height: 100%;
   width: 100%;
-  border: 3px solid #999999;
+  border: 2px solid #999999;
   border-radius: 5px;
+}
+
+body{
+  background-color: #ebebeb;
+  color: black;
+}
+
+label{
+  color: #337ab7;
+  font-size: 14px;
+}
+
+.navbar-header{
+  font-weight: bold;
+}
+
+#area_input_div {
+  margin-bottom: 20px !important;
+}
+
+#mapping_message_div{
+  padding-top: 25px;
+  color: #94631e;
 }
       
  #map {
         height: 400px;
-        width: 600px;
-        border: 3px solid #999999;
+        width: 100%;
+        border: 2px solid #999999;
         border-radius: 5px;
       }
       
@@ -67,6 +90,8 @@ img {
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
         width: 400px;
+        border-radius: 10px;
+        border-color: #337ab7;
       }
 
       #area_input:focus {

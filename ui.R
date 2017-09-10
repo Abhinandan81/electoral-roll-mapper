@@ -2,7 +2,7 @@ library(shiny)
 library(shinythemes)
 library(shinyjs)
 
-shinyUI(fluidPage(theme = shinytheme("cerulean"),
+shinyUI(fluidPage(theme = shinytheme("superhero"),
                   
                   # HTML head section to import css and JS as needed
                   tags$head(
@@ -16,8 +16,12 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                   fluidRow(
                     column(6,
                            fluidRow(
-                             column(12,
+                             column(6,
                                     uiOutput("areas")
+                             ),
+                             column(6,
+                                    div(id = "mapping_message_div",
+                                        uiOutput("area_mapping_message"))
                              )
                            ),
                            fluidRow(
@@ -31,7 +35,10 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                     column(6,
                            fluidRow(
                              column(12,
-                                    textInput(inputId = "area_input", label = "", value = "", placeholder = "Search for area")
+                                    div(id = "area_input_div",
+                                        textInput(inputId = "area_input", label = "", value = "", placeholder = "Search for area")
+                                        )
+                                    
                              )
                            ),
                            fluidRow(
@@ -43,11 +50,16 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                            fluidRow(
                              column(12,
                                     div( id = "save_button_div",
-                                         actionButton(inputId = "save_cordinates", label = "Save Coordinates", class = "btn-primary")
+                                         actionButton(inputId = "save_cordinates", label = "Save Coordinates", class = "btn-success")
                                     )
                              )
                            )
                     )
+                  ),
+                  fluidRow(column(12,
+                                  dataTableOutput("area_mapping_table")
+                                  )
+                    
                   ),
                   
                   # ADDING GOOGLE API SCRIPTS
