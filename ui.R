@@ -7,7 +7,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                   
                   # HTML head section to import css and JS as needed
                   tags$head(
-                    includeCSS("www/custom_style.css")
+                    includeCSS("www/custom_style.css"),
+                    tags$link(rel = "stylesheet", type = "text/css", href = "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
                     ),
                   
                   navbarPage(title = "Electoral Roll Mapper", fluid = TRUE, theme = ),
@@ -29,7 +30,7 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                     column(6,
                            fluidRow(
                              column(12,
-                                    "search"
+                                    textInput(inputId = "area-input", label = "", value = "", placeholder = "Search for area")
                              )
                            ),
                            fluidRow(
@@ -45,7 +46,9 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                   # ADDING GOOGLE API SCRIPTS
                   HTML('
                        <script type="text/javascript" src="custom_js.js"></script>
-                       <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_TSprWOtIlrzkAgJ7kW4LJj_Z2CoeGHY&callback=initMap" async defer></script>'
+                       <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD_TSprWOtIlrzkAgJ7kW4LJj_Z2CoeGHY&libraries=places&callback=initAutocomplete"
+                       async defer></script>
+                       '
                        )
                   
 )) 
