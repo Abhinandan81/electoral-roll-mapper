@@ -1,6 +1,5 @@
 library(shiny)
 library(shinythemes)
-#library(leaflet)
 library(shinyjs)
 
 shinyUI(fluidPage(theme = shinytheme("cerulean"),
@@ -10,6 +9,8 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                     includeCSS("www/custom_style.css"),
                     tags$link(rel = "stylesheet", type = "text/css", href = "//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css")
                     ),
+                  
+                  useShinyjs(),  # Set up shinyjs
                   
                   navbarPage(title = "Electoral Roll Mapper", fluid = TRUE, theme = ),
                   fluidRow(
@@ -30,13 +31,19 @@ shinyUI(fluidPage(theme = shinytheme("cerulean"),
                     column(6,
                            fluidRow(
                              column(12,
-                                    textInput(inputId = "area-input", label = "", value = "", placeholder = "Search for area")
+                                    textInput(inputId = "area_input", label = "", value = "", placeholder = "Search for area")
                              )
                            ),
                            fluidRow(
                              column(12,
                                     div( id = "map"
-                                         #leafletOutput("map")
+                                    )
+                             )
+                           ),
+                           fluidRow(
+                             column(12,
+                                    div( id = "save_button_div",
+                                         actionButton(inputId = "save_cordinates", label = "Save Coordinates", class = "btn-success")
                                     )
                              )
                            )
