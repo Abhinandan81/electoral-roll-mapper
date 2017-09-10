@@ -207,7 +207,7 @@ shinyServer(function(input, output, session){
     removeModal()
 
     showNotification(paste ("Co-ordinates for", input$area_names, "has been stored / updated successfully", sep = " "),
-                     duration = 20, closeButton = TRUE, type = "message")
+                     duration = 10, closeButton = TRUE, type = "message")
     })
   
 
