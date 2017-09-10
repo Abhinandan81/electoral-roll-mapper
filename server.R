@@ -1,4 +1,5 @@
 library(shiny)
+library(shinyjs)
 library(readxl)
 library(dplyr)
 library(DBI)
@@ -24,13 +25,18 @@ table_area_details <- "area_details"
 #****************** START: PERSISTING AREA DETAILS TO DATABASE ***************#
 
 persistAreaDatails <- function(data, table_name) {
+  
+  conn <- poolCheckout(pool);
+  
   dbWriteTable(
-    pool,
+    conn,
     value = data,
     name = table_name,
     row.names = FALSE,
     append = TRUE
   )
+  
+  poolReturn(conn)
 }
 #****************** END: PERSISTING AREA DETAILS TO DATABASE ***************#
 
@@ -74,11 +80,17 @@ shinyServer(function(input, output){
   
   #********* START: FETCHING ALL AREAS TO BE MAPPED FROM DATABASE ************#
   fetchAreasToBeMapped <- function(table_name){
+    
+    conn <- poolCheckout(pool);
+    
     #query to fetch area_name from table
     query <- paste("SELECT area_name FROM ", table_name, ";", sep = " ")
     
     area_details <-
-      dbGetQuery(pool, query)
+      dbGetQuery(conn, query)
+    
+    poolReturn(conn)
+    
   
     if(is.null(area_details))
       return(NULL)
@@ -90,11 +102,17 @@ shinyServer(function(input, output){
   
   #******* START: FETCHING IMAGE PATH FOR GIVEN AREA FROM DATABASE *********#
   fetchImagePathForGivenArea <- function(area_name, table_name){
+    
+    conn <- poolCheckout(pool);
+    
     #query to fetch image_path from table
     query <- paste("SELECT image_path FROM ", table_name, " where area_name = '", area_name, "';", sep = "")
     
     image_details <-
-      dbGetQuery(pool, query)
+      dbGetQuery(conn, query)
+    
+    poolReturn(conn)
+    
     
     if(is.null(image_details))
       return(NULL)
@@ -103,8 +121,25 @@ shinyServer(function(input, output){
   }
   #******** END: FETCHING IMAGE PATH FOR GIVEN AREA FROM DATABASE *********#
   
-  
+  updateAreaCoordinates <- function(area_name, coordinates, table_name) {
+    #query to update the co-ordinates for the given area
+    query <- paste("UPDATE ", table_name, " SET latitude = '", coordinates$latitude,"', ", 
+                    "longitude = '", coordinates$longitude,"'", " WHERE area_name = '", area_name, "';", sep = "")
     
+    print("query=============")
+    print(query)
+    conn <- poolCheckout(pool)
+    
+    coordinate_update_status <-
+      dbSendQuery(conn, query)
+    
+    poolReturn(conn)
+    
+    print("===== coordinate_update_status ===")
+    print(coordinate_update_status)
+  }
+  
+  
   # RENDERING LIST OF AREAS: fetching list of areas to map - populating and rendering selctinput with area names
   output$areas <-  renderUI({
     
@@ -128,11 +163,34 @@ shinyServer(function(input, output){
                 alt = toupper(input$area_names)))
   }, deleteFile = FALSE)
   
+  # observing the state of area_coordinates and accordingly enabling / disabling the save button
   observe({
-    input$area_coordinates
-    print("Marker location changed")
-    print(input$area_coordinates)
     
+    if(is.null(input$area_coordinates)){
+      shinyjs::disable(id = "save_cordinates")
+    } else{
+        shinyjs::enable(id = "save_cordinates")
+      }
   })
+  
+  # observe({
+  #   if(is.null(input$area_names)){
+  #     shinyjs::disable(id = "area_input")
+  #   } else{
+  #     shinyjs::enable(id = "area_input")
+  #   }
+  # })
+  
+  # START: PERSISTING CO-ORDINATES
+  observeEvent(input$save_cordinates, {
+    
+    req(input$area_names, input$area_coordinates, input$save_cordinates)
+    
+    # call to update-coordinate of the selected area
+    updateAreaCoordinates(input$area_names, input$area_coordinates, table_area_details)
+    
+    showNotification(paste ("Co-ordinates for", input$area_names, "area has been stored / updated successfully", sep = " "),
+                     duration = 20, closeButton = TRUE, type = "message")
+    })
   
 })
