@@ -124,7 +124,7 @@ shinyServer(function(input, output, session){
   updateAreaCoordinates <- function(area_name, coordinates, table_name) {
     #query to update the co-ordinates for the given area
     query <- paste("UPDATE ", table_name, " SET latitude = '", coordinates$latitude,"', ", 
-                    "longitude = '", coordinates$longitude,"'",", mapping_status = 1" ," WHERE area_name = '", area_name, "';", sep = "")
+                    "longitude = '", coordinates$longitude,"'", ", address = '", coordinates$formatted_address, "' ",", mapping_status = 1" ," WHERE area_name = '", area_name, "';", sep = "")
     
     conn <- poolCheckout(pool)
     
@@ -153,13 +153,12 @@ shinyServer(function(input, output, session){
     if(is.null(area_details))
       return(NULL)
     
-    area_details <- select(area_details, -image_path, -mapping_status)
+    area_details <- select(area_details, -id, -image_path, -mapping_status)
     
-    colnames(area_details) <- c("Id", "Area Name", "Latitude", "longitude", "Address")
-    
-    print("area_details")
-    print(area_details)
-  })
+    colnames(area_details) <- c("Area Name", "Latitude", "longitude", "Address")
+    return(area_details)
+  }, options = list(columnDefs = list(list(targets = c(0, 1, 2, 3), searchable = FALSE)),
+    pageLength = 10))
   
   fetchSelectedAreaDetails <- reactive({
     req(input$area_names)
@@ -202,6 +201,18 @@ shinyServer(function(input, output, session){
     }
     
     span(mapping_message)
+  })
+  
+  output$show_marker_location <- renderUI({
+    req(input$area_coordinates)
+    
+    coordinates <- input$area_coordinates
+    
+    print("========= input$area_coordinates ===========")
+    print(input$area_coordinates)
+
+     div( tags$label("Lattitude :"), span(coordinates$latitude), tags$br(),
+          tags$label("Longitude :"), span(coordinates$longitude))
   })
   
   # observing the state of area_coordinates and accordingly enabling / disabling the save button
