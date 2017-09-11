@@ -148,17 +148,22 @@ shinyServer(function(input, output, session){
   })
   
   output$area_mapping_table <- renderDataTable({
-    area_details <- fetchAllAreasDetailsFromDatabase(table_area_details)
     
-    if(is.null(area_details))
-      return(NULL)
+    req(input$tabs)
     
-    area_details <- select(area_details, -id, -image_path, -mapping_status)
-    
-    colnames(area_details) <- c("Area Name", "Latitude", "longitude", "Address")
-    return(area_details)
+    if(input$tabs == "Mapping Details"){
+      area_details <- fetchAllAreasDetailsFromDatabase(table_area_details)
+      
+      if(is.null(area_details))
+        return(NULL)
+      
+      area_details <- select(area_details, -id, -image_path, -mapping_status)
+      
+      colnames(area_details) <- c("Area Name", "Latitude", "longitude", "Address")
+      return(area_details)
+    }
   }, options = list(columnDefs = list(list(targets = c(0, 1, 2, 3), searchable = FALSE)),
-    pageLength = 10))
+                    pageLength = 10))
   
   fetchSelectedAreaDetails <- reactive({
     req(input$area_names)
@@ -206,12 +211,12 @@ shinyServer(function(input, output, session){
   output$show_marker_location <- renderUI({
     req(input$area_coordinates)
     
-    coordinates <- input$area_coordinates
-    
-    print("========= input$area_coordinates ===========")
+    print("input$area_coordinates")
     print(input$area_coordinates)
-
-     div( tags$label("Lattitude :"), span(coordinates$latitude), tags$br(),
+    
+    coordinates <- input$area_coordinate
+    
+    div( tags$label("Lattitude :"), span(coordinates$latitude), tags$br(),
           tags$label("Longitude :"), span(coordinates$longitude))
   })
   
