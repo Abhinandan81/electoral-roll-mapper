@@ -34,11 +34,15 @@ shinyUI(fluidPage(theme = shinytheme("superhero"),
                     ),
                     column(6,
                            fluidRow(
-                             column(12,
+                             column(7,
                                     div(id = "area_input_div",
                                         textInput(inputId = "area_input", label = "", value = "", placeholder = "Search for area")
                                         )
                                     
+                             ),
+                             column(5,
+                                    div(id = "marker_location_div",
+                                        uiOutput("show_marker_location"))
                              )
                            ),
                            fluidRow(
@@ -56,10 +60,12 @@ shinyUI(fluidPage(theme = shinytheme("superhero"),
                            )
                     )
                   ),
-                  fluidRow(column(12,
-                                  dataTableOutput("area_mapping_table")
-                                  )
-                    
+                  fluidRow( column(1),
+                            column(10, div( id = "mapping_table_div",
+                                   dataTableOutput("area_mapping_table")
+                                   )
+                                   ),
+                            column(1)
                   ),
                   
                   # ADDING GOOGLE API SCRIPTS
