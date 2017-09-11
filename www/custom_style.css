@@ -28,6 +28,32 @@ label{
   padding-top: 25px;
   color: #94631e;
 }
+
+#marker_location_div{
+  padding-top: 15px;
+  color: #94631e;
+}
+
+#mapping_table_div{
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.table-striped>tbody>tr:nth-of-type(odd) {
+    background-color: rgba(148, 141, 141, 0.57);
+}
+
+.pagination>.disabled>span, .pagination>.disabled>span:hover, .pagination>.disabled>span:focus, .pagination>.disabled>a, .pagination>.disabled>a:hover, .pagination>.disabled>a:focus {
+    background-color: #4e5d6c;
+    color: white;
+}
+
+.pagination>.active>a{
+ background-color: #1a242d;
+}
+
       
  #map {
         height: 400px;
@@ -89,7 +115,7 @@ label{
         margin-left: 12px;
         padding: 0 11px 0 13px;
         text-overflow: ellipsis;
-        width: 400px;
+        width: 350px;
         border-radius: 10px;
         border-color: #337ab7;
       }
