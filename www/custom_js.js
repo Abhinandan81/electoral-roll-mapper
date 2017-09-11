@@ -24,16 +24,23 @@
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
+          //BASE URL for geocode request
+          var geocode_base_url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=";
+          var geocode_url_trail = "&sensor=true/false";
+          var lat_lng_sep = ",";
+          var geocode_url;
+          
           var places = searchBox.getPlaces();
 
           if (places.length == 0) {
             return;
           }
-
+          
           // Clear out the old markers.
           markers.forEach(function(marker) {
             marker.setMap(null);
           });
+          
           markers = [];
 
           // For each place, get the icon, name and location.
@@ -44,13 +51,13 @@
               return;
             }
             
-            var icon = {
+           /* var icon = {
               url: place.icon,
               size: new google.maps.Size(71, 71),
               origin: new google.maps.Point(0, 0),
               anchor: new google.maps.Point(17, 34),
               scaledSize: new google.maps.Size(25, 25)
-            };
+            };*/
           
             var marker_coordinates = [];
            
@@ -66,6 +73,9 @@
               origin: new google.maps.Point(0, 0),
               anchor: new google.maps.Point(17, 34)
             });
+            
+            // pushing selected marker
+            markers.push(marker);
 
             if (place.geometry.viewport) {
               // Only geocodes have viewport.
@@ -74,26 +84,42 @@
               bounds.extend(place.geometry.location);
             }
             
-            // INITIAL COORDINATES: getting the cordinates on selecteing the place from search bar
-            marker_coordinates = {latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng()};
-                
+            geocode_url = geocode_base_url.concat(marker.getPosition().lat(), lat_lng_sep,
+            marker.getPosition().lng(), geocode_url_trail);
+            
             $.ajax({
-            url: "http://maps.googleapis.com/maps/api/geocode/json?latlng=40.714224,-73.961452&sensor=true/false",
+            url: geocode_url,
             type: 'GET',
             success: function(res) {
-                console.log("geocoding res", res.results[0].formatted_address);
-            }
-        });    
-            // Capturing the change in marker position : It acts as a reactive input value  
+            // INITIAL COORDINATES: getting the cordinates on selecteing the place from search bar
+            marker_coordinates = { latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng(),
+              formatted_address : res.results[0].formatted_address };
+              
+              // Capturing the change in marker position : It acts as a reactive input value  
             Shiny.onInputChange("area_coordinates", marker_coordinates);
+              }
+            });
+            
+            
 
             // Listening to the change in marker position
             google.maps.event.addListener(marker, 'dragend', function(a) {
-              // GETTING CHANGED COORDINATES: getting the cordinates on selecteing the place from search bar
-              marker_coordinates = {latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng()};
+              geocode_url = geocode_base_url.concat(marker.getPosition().lat(), lat_lng_sep,
+              marker.getPosition().lng(), geocode_url_trail);
               
-              // Capturing the change in marker position : It acts as a reactive input value
-              Shiny.onInputChange("area_coordinates", marker_coordinates);
+              $.ajax({
+                url: geocode_url,
+                type: 'GET',
+                success: function(res) {
+                  // GETTING CHANGED COORDINATES: getting the cordinates on selecteing the place from search bar
+                  marker_coordinates = { latitude : marker.getPosition().lat(), longitude :  marker.getPosition().lng(),
+                  formatted_address : res.results[0].formatted_address };
+                  
+                  // Capturing the change in marker position : It acts as a reactive input value
+                  Shiny.onInputChange("area_coordinates", marker_coordinates);
+                  }
+                  });
+                  
             });
 
           });
