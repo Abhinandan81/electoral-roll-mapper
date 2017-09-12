@@ -37,7 +37,7 @@ shinyUI(fluidPage(
                ))),
         column(
           6,
-          fluidRow(column(7,
+          fluidRow(column(12,
                           div(
                             id = "area_input_div",
                             textInput(
@@ -46,16 +46,12 @@ shinyUI(fluidPage(
                               value = "",
                               placeholder = "Search for area"
                             )
-                          )),
-                   column(
-                     5,
-                     div(id = "marker_location_div",
-                         uiOutput("show_marker_location"))
-                   )),
+                          ))
+                   ),
           fluidRow(column(12,
                           div(id = "map"))),
           fluidRow(column(
-            12,
+            3,
             div(
               id = "save_button_div",
               actionButton(
@@ -64,7 +60,13 @@ shinyUI(fluidPage(
                 class = "btn-success"
               )
             )
-          ))
+          ),
+          column(
+            9,
+            div(id = "marker_location_div",
+                uiOutput("show_marker_location"))
+          )
+          )
         )
       )
     ),
