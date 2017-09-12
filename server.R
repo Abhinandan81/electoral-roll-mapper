@@ -211,13 +211,11 @@ shinyServer(function(input, output, session){
   output$show_marker_location <- renderUI({
     req(input$area_coordinates)
     
-    print("input$area_coordinates")
-    print(input$area_coordinates)
-    
-    coordinates <- input$area_coordinate
-    
-    div( tags$label("Lattitude :"), span(coordinates$latitude), tags$br(),
-          tags$label("Longitude :"), span(coordinates$longitude))
+    coordinates <- input$area_coordinates
+
+    div( tags$label("Lattitude :"), span(coordinates$latitude),
+          tags$label(",     Longitude :"), span(coordinates$longitude), tags$br(),
+          tags$label("Address :"), span(coordinates$formatted_address))
   })
   
   # observing the state of area_coordinates and accordingly enabling / disabling the save button
