@@ -299,18 +299,7 @@ shinyServer(function(input, output, session) {
   
   #************      END: RENDERING OUTPUT TO THE UI SECTION        *************#
   
-  # # ----- FETCHING AREA DETAILS ON SELETING AREA NAME ------#
-  # fetchSelectedAreaDetails <- reactive({
-  #   req(input$area_names)
-  #   
-  #   area_details <-
-  #     fetchSelectedAreaDetailsFromDatabase(input$area_names, table_area_details)
-  #   
-  #   return(area_details)
-  # })
-  
-  
-  
+
   # observing the state of area_coordinates and accordingly enabling / disabling the save button
   observe({
     if (is.null(input$area_coordinates) | is.null(input$area_names)) {
@@ -357,6 +346,8 @@ shinyServer(function(input, output, session) {
     # removing the mapping modal
     removeModal()
     
+    updateTextInput(session, "area_input", value = "")
+
     showNotification(
       paste (
         "Co-ordinates for",
