@@ -182,11 +182,11 @@ shinyServer(function(input, output, session){
     area_details <- fetchSelectedAreaDetails()
     
     if(is.null(area_details)){
-      image_path <- "reference/default_image.png"
+      image_path <- "reference/default_image.jpg"
       
     }else if(is.null(area_details$image_path)){
       # If no image found for slected area, show default image
-      image_path <- "reference/default_image.png"
+      image_path <- "reference/default_image.jpg"
     }else{
       image_path <- area_details$image_path
     }
