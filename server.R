@@ -95,6 +95,8 @@ unmapped_area_details <- bootstrapDatabaseWithUnmappedAreaDetails()
 
 shinyServer(function(input, output, session) {
   
+  reactiveValues <- reactiveValues()
+  
   #************      START: DATABASE CRUD OPERATIONS SECTION           **************#
   
   #------------  FETCHING ALL AREAS TO BE MAPPED FROM DATABASE ------------ #
@@ -202,13 +204,24 @@ shinyServer(function(input, output, session) {
   
   #------------ RENDERING AREA - COORDINATE MAPPING STATUS ------------ #
   output$area_mapping_message <-  renderUI({
-    area_details <- fetchSelectedAreaDetails()
+    
+    req(input$area_names)
+    
     mapping_message <-
-      "Selected area doesn't have coordinate mapping."
+      "Status: Not mapped"
+    
+    area_details <- fetchSelectedAreaDetailsFromDatabase(input$area_names, table_area_details)
     
     if (area_details$mapping_status == 1) {
       mapping_message <-
-        "Selected area is already mapped with coordinates."
+        "Status: Mapped"
+    }
+    
+    if(!is.null(reactiveValues$update_area_coordinates_status)){
+      if (area_details$mapping_status == 1) {
+        mapping_message <-
+          "Status: Mapped"
+      }
     }
     
     span(mapping_message)
@@ -262,16 +275,21 @@ shinyServer(function(input, output, session) {
     
     image_path <- NULL
     
-    area_details <- fetchSelectedAreaDetails()
-    
-    if (is.null(area_details)) {
-      image_path <- "reference/default_image.jpg"
+    if(input$area_names == ""){
+      image_path <- "reference/no_image.jpg"
+    }else{
+      area_details <- fetchSelectedAreaDetailsFromDatabase(input$area_names, table_area_details)
       
-    } else if (is.null(area_details$image_path)) {
-      # If no image found for slected area, show default image
-      image_path <- "reference/default_image.jpg"
-    } else{
-      image_path <- area_details$image_path
+      if (is.null(area_details)) {
+        image_path <- "reference/default_image.jpg"
+        
+      } else if (is.null(area_details$image_path)) {
+        # If no image found for slected area, show default image
+        image_path <- "reference/default_image.jpg"
+      } else{
+        image_path <- area_details$image_path
+      }
+      
     }
     
     return(list(src = image_path,
@@ -281,15 +299,15 @@ shinyServer(function(input, output, session) {
   
   #************      END: RENDERING OUTPUT TO THE UI SECTION        *************#
   
-  # ----- FETCHING AREA DETAILS ON SELETING AREA NAME ------#
-  fetchSelectedAreaDetails <- reactive({
-    req(input$area_names)
-    
-    area_details <-
-      fetchSelectedAreaDetailsFromDatabase(input$area_names, table_area_details)
-    
-    return(area_details)
-  })
+  # # ----- FETCHING AREA DETAILS ON SELETING AREA NAME ------#
+  # fetchSelectedAreaDetails <- reactive({
+  #   req(input$area_names)
+  #   
+  #   area_details <-
+  #     fetchSelectedAreaDetailsFromDatabase(input$area_names, table_area_details)
+  #   
+  #   return(area_details)
+  # })
   
   
   
@@ -314,7 +332,7 @@ shinyServer(function(input, output, session) {
     showModal(
       modalDialog(
         title = "Area and Coordinate mapping confirmation",
-        "Are you sure about updating the Area and Coordinate Mapping?",
+        "Are you sure about updating the area and coordinates apping?",
         easyClose = FALSE,
         footer =  tagList(
           actionButton("persist_cordinates", "Yes", class = "btn-success"),
@@ -332,7 +350,7 @@ shinyServer(function(input, output, session) {
         input$persist_cordinates)
     
     # call to update-coordinate of the selected area
-    updateAreaCoordinates(input$area_names,
+    reactiveValues$update_area_coordinates_status <- updateAreaCoordinates(input$area_names,
                           input$area_coordinates,
                           table_area_details)
     
