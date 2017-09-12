@@ -43,7 +43,7 @@ shinyUI(fluidPage(
                                      inputId = "area_input",
                                      label = "",
                                      value = "",
-                                     placeholder = "Search for area"
+                                     placeholder = "Search for a place"
                                    )
                                  ))),
                  fluidRow(column(12,
