@@ -25,11 +25,11 @@ Providing a platform to a user to feed area details along with rough paper map i
 * Google map geocoding API
 
 ### Database schema details
-* create database electoral_roll_mapper;
+    Create database electoral_roll_mapper;
 
-* Table structure and creation
+Table structure and creation
 
-Create table area_details(id integer primary key AUTO_INCREMENT, 
+    Create table area_details(id integer primary key AUTO_INCREMENT, 
                           area_name varchar(100) NOT NULL,
                           image_path varchar(200) not null,
                           latitude varchar(50),
