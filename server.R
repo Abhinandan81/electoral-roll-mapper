@@ -320,8 +320,8 @@ shinyServer(function(input, output, session) {
     
     showModal(
       modalDialog(
-        title = "Area and Coordinate mapping confirmation",
-        "Are you sure about updating the area and coordinates apping?",
+        title = "Area and Co-ordinate mapping confirmation",
+        "Are you sure about updating the area and co-ordinates mapping?",
         easyClose = FALSE,
         footer =  tagList(
           actionButton("persist_cordinates", "Yes", class = "btn-success"),
