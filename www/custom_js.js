@@ -19,8 +19,32 @@
         map.addListener('bounds_changed', function() {
           searchBox.setBounds(map.getBounds());
         });
-
+        
+        
         var markers = [];
+        
+        //clering the markers on clearing the search box content
+        $("#area_input").keyup(function() {
+          if (!this.value) {
+            // Clear out the old markers.
+            markers.forEach(function(marker) {
+              marker.setMap(null);
+              });
+          }
+          
+        });
+        
+        //clering the markers on clearing the search box content
+        $("#area_input").on("change", function() {
+          if (this.value === "") {
+            // Clear out the old markers.
+            markers.forEach(function(marker) {
+              marker.setMap(null);
+              });
+          }
+          
+        });
+       
         // Listen for the event fired when the user selects a prediction and retrieve
         // more details for that place.
         searchBox.addListener('places_changed', function() {
@@ -31,7 +55,7 @@
           var geocode_url;
           
           var places = searchBox.getPlaces();
-
+          
           if (places.length == 0) {
             return;
           }
@@ -51,14 +75,6 @@
               return;
             }
             
-           /* var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };*/
-          
             var marker_coordinates = [];
            
             // Create a marker for each place.
@@ -99,8 +115,6 @@
             Shiny.onInputChange("area_coordinates", marker_coordinates);
               }
             });
-            
-            
 
             // Listening to the change in marker position
             google.maps.event.addListener(marker, 'dragend', function(a) {
