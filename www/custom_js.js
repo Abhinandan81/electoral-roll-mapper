@@ -30,6 +30,9 @@
             markers.forEach(function(marker) {
               marker.setMap(null);
               });
+              
+              Shiny.onInputChange("area_coordinates", null);
+
           }
           
         });
@@ -41,6 +44,8 @@
             markers.forEach(function(marker) {
               marker.setMap(null);
               });
+              
+              Shiny.onInputChange("area_coordinates", null);
           }
           
         });
